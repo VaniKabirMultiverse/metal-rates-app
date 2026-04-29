@@ -6,8 +6,8 @@ export default async function handler(req, res) {
     const goldData = await goldResponse.json();
     const silverData = await silverResponse.json();
 
-    const gold24k = goldData.price / 31.1035;
-    const silver = silverData.price / 31.1035;
+    const gold24k = goldData.price;
+    const silver = silverData.price;
 
     res.status(200).json({
       gold_24k_per_gram: Math.round(gold24k),
@@ -15,6 +15,7 @@ export default async function handler(req, res) {
       gold_18k_per_gram: Math.round(gold24k * 0.75),
       silver_per_gram: Math.round(silver)
     });
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
