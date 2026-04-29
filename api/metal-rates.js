@@ -1,35 +1,21 @@
 export default async function handler(req, res) {
   try {
-    const API_KEY = process.env.GOLD_API_KEY;
-
-    const goldResponse = await fetch("https://www.goldapi.io/api/XAU/INR", {
-      headers: {
-        "x-access-token": API_KEY,
-        "Content-Type": "application/json"
-      }
-    });
-
-    const silverResponse = await fetch("https://www.goldapi.io/api/XAG/INR", {
-      headers: {
-        "x-access-token": API_KEY,
-        "Content-Type": "application/json"
-      }
-    });
+    const goldResponse = await fetch("https://api.gold-api.com/price/XAU");
+    const silverResponse = await fetch("https://api.gold-api.com/price/XAG");
 
     const goldData = await goldResponse.json();
     const silverData = await silverResponse.json();
 
-    res.status(200).json({
-      api_key_exists: !!API_KEY,
-      gold_status: goldResponse.status,
-      silver_status: silverResponse.status,
-      gold_response: goldData,
-      silver_response: silverData
-    });
+    const gold24k = goldData.price / 31.1035;
+    const silver = silverData.price / 31.1035;
 
-  } catch (error) {
-    res.status(500).json({
-      error: error.message
+    res.status(200).json({
+      gold_24k_per_gram: Math.round(gold24k),
+      gold_22k_per_gram: Math.round(gold24k * 0.916),
+      gold_18k_per_gram: Math.round(gold24k * 0.75),
+      silver_per_gram: Math.round(silver)
     });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 }
